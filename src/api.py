@@ -33,8 +33,10 @@ api = Api(app)
 api.add_resource(resources.TwitterSummarizer, '/video',
                  resource_class_kwargs={'q': q})
 
-worker = VideoWorker(q)
-worker.start()
+workers = []
+for _ in range(1):
+    workers.append(VideoWorker(q))
+    workers[-1].start()
 
 
 @app.route('/display/<video_id>')
@@ -56,7 +58,8 @@ def video_feed(video_id):
 
 def exit_handler():
     print('Shutting down server...')
-    worker.stop()
+    for w in workers:
+        w.stop()
     sleep(0.5)
     sys.exit(0)
 
