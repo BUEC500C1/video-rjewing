@@ -24,7 +24,7 @@ class VideoWorker(Thread):
 
     def run(self):
         while self.running:
-            filename, user = self.q.get()
+            filename, user, result_ready = self.q.get()
             print(f"Worker making {filename} for @{user}")
 
             remove_image_files(self.image_path)  # clear out old images
@@ -34,7 +34,7 @@ class VideoWorker(Thread):
 
             os.system(
                 f"ffmpeg -hide_banner -loglevel panic -f image2 -r 1/3 -i {self.image_path}/tweet%d.png -y ./videos/{filename}.ogg")
-            self.q.task_done()
+            result_ready.set()
 
     def stop(self):
         self.running = False
