@@ -15,6 +15,11 @@ EC500_TWITTER_ACCESS_SECRET=XXXXXX
 5. To test the API, run `curl localhost:5000/video?user=elonmusk`
 6. Go to the URL provided when the API call returns.
 
+## Docker
+Alternatively, we can use docker-compose to easily deploy the application. First create the docker secret files as described in `docker/secrets/SECRETS.md`.
+
+Then run `docker-compose -f "video-rjewing/docker-compose.yml" up -d --build`.
+
 ## Explanation
 The API call queues up a task to convert the Twitter user's timeline into a video. A worker running on a seperate thread pulls tasks from this queue and begins the tweet to video conversion.
 
