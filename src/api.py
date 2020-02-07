@@ -1,16 +1,12 @@
 import os
 import sys
 import shutil
-import atexit
-
 import resources
-
+import signal
 from time import sleep
-from queue import Queue
+from multiprocessing import Pool
 from flask import Flask, url_for, send_from_directory
 from flask_restful import Api
-
-from worker import VideoWorker
 from config import Config
 
 basedir = os.path.dirname(os.path.dirname(__file__))
@@ -27,17 +23,12 @@ if not os.path.exists(video_dir):
 app = Flask(__name__)
 app.config.from_object(Config)
 
-q = Queue()
+signal.signal(signal.SIGINT, signal.SIG_IGN)
+p = Pool(1)
 
 api = Api(app)
 api.add_resource(resources.TwitterSummarizer, '/video',
-                 resource_class_kwargs={'q': q})
-
-workers = []
-for _ in range(1):
-    workers.append(VideoWorker(q))
-    workers[-1].start()
-
+                 resource_class_kwargs={'p': p})
 
 @app.route('/display/<video_id>')
 def video_displayer(video_id):
@@ -56,15 +47,18 @@ def video_feed(video_id):
     return send_from_directory(os.path.abspath(os.path.join(basedir, 'videos')), video_id, mimetype='video/ogg')
 
 
-def exit_handler():
+def exit_handler(*args, **kwargs):
     print('Shutting down server...')
-    for w in workers:
-        w.stop()
-    sleep(0.5)
+    p.terminate()
+    p.join()
+
+    sleep(1)
     sys.exit(0)
 
 
-atexit.register(exit_handler)
+signal.signal(signal.SIGTERM, exit_handler)
+signal.signal(signal.SIGINT, exit_handler)
+signal.signal(signal.SIGQUIT, exit_handler)
 
 if __name__ == '__main__':
     app.run()

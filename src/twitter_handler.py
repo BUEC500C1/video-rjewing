@@ -1,11 +1,11 @@
-import sys
-sys.path.insert(0, '..')
-from config import Config
 import tweepy
 import requests
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont, ImageChops, ImageOps
 from textwrap import wrap
+import sys
+sys.path.insert(0, '..')
+from config import Config  # noqa: E402
 
 FONT_PATH = "./fonts/OpenSansEmoji.ttf"
 
