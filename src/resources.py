@@ -1,5 +1,4 @@
 from flask_restful import Resource
-from multiprocessing import Event
 from webargs import fields
 from webargs.flaskparser import use_args
 from worker import create_twitter_video

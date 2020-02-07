@@ -30,6 +30,7 @@ api = Api(app)
 api.add_resource(resources.TwitterSummarizer, '/video',
                  resource_class_kwargs={'p': p})
 
+
 @app.route('/display/<video_id>')
 def video_displayer(video_id):
     video_name = f"{video_id}.ogg"
