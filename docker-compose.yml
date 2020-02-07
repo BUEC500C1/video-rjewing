@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  video_rjewing:
+    image: video_rjewing
+    container_name: video_rjewing
+    build: .
+    ports:
+      - 5000:5000
+    secrets:
+      - EC500_TWITTER_API_KEY
+      - EC500_TWITTER_SECRET_KEY
+      - EC500_TWITTER_ACCESS_TOKEN
+      - EC500_TWITTER_ACCESS_SECRET
+
+secrets:
+  EC500_TWITTER_API_KEY:
+    file: ./docker/secrets/EC500_TWITTER_API_KEY
+  EC500_TWITTER_SECRET_KEY:
+    file: ./docker/secrets/EC500_TWITTER_SECRET_KEY
+  EC500_TWITTER_ACCESS_TOKEN:
+    file: ./docker/secrets/EC500_TWITTER_ACCESS_TOKEN
+  EC500_TWITTER_ACCESS_SECRET:
+    file: ./docker/secrets/EC500_TWITTER_ACCESS_SECRET

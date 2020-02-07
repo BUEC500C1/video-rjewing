@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  homework:
+    image: homework
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000

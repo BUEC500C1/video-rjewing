@@ -4,3 +4,5 @@ __pycache__
 *.png
 videos
 images
+docker/secrets/*
+!docker/secrets/SECRETS.md

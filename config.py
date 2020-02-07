@@ -3,14 +3,23 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config():
-    TWITTER_API_KEY = os.getenv('EC500_TWITTER_API_KEY')
-    TWITTER_SECRET_KEY = os.getenv('EC500_TWITTER_SECRET_KEY')
-    TWITTER_ACCESS_TOKEN = os.getenv('EC500_TWITTER_ACCESS_TOKEN')
-    TWITTER_ACCESS_SECRET = os.getenv('EC500_TWITTER_ACCESS_SECRET')
+def load_secret_from_path(name: str) -> str:
+    path = f"/run/secrets/{name}"
+    if not os.path.exists(path):
+        return None
 
-    SECRET_KEY = os.getenv('EC500_SECRET_KEY', 'dev_key')
+    with open(path, "r") as secret_file:
+        return secret_file.read().strip()
+
+
+class Config():
+    TWITTER_API_KEY = load_secret_from_path('EC500_TWITTER_API_KEY') or os.getenv('EC500_TWITTER_API_KEY')
+    TWITTER_SECRET_KEY = load_secret_from_path('EC500_TWITTER_SECRET_KEY') or os.getenv('EC500_TWITTER_SECRET_KEY')
+    TWITTER_ACCESS_TOKEN = load_secret_from_path('EC500_TWITTER_ACCESS_TOKEN') or os.getenv('EC500_TWITTER_ACCESS_TOKEN')
+    TWITTER_ACCESS_SECRET = load_secret_from_path('EC500_TWITTER_ACCESS_SECRET') or os.getenv('EC500_TWITTER_ACCESS_SECRET')
+
+    SECRET_KEY = load_secret_from_path('EC500_SECRET_KEY') or os.getenv('EC500_SECRET_KEY', 'dev_key')
 
     # Set Host and Port
     API_IP = '0.0.0.0'
-    API_PORT = 8080
+    API_PORT = 5000
