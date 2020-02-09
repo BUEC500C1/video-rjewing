@@ -1,5 +1,34 @@
 # video-rjewing
 
+## Answers to homework questions
+#### Re-encoding Video Files
+The commands I used to re-encode a video file to the two bitrates were:
+
+**720p at 2Mbps and 30fps:**
+```
+ffmpeg -i input.mp4 -c:a copy -c:v copy -r 30 -s hd720 -b:v 2M output.mp4
+```
+**480p at 1Mbps and 30fps:**
+```
+ffmpeg -i input.mp4 -c:a copy -c:v copy -r 30 -s hd480 -b:v 1M output.mp4
+```
+
+#### Task 1
+1. Estimate the processing power needed to execute such operations on your computer.
+   
+I ran the command to convert a video to 720p and found that it used ~400% CPU using the `top` command.
+
+2. Estimate the maximum number of such operations that can run on your system.
+
+On my laptop, I have 8 cores (800% CPU), so I should be able to run 2 of these operations at the same time without losing speed or throttling the convertion. If I go above this, then my computer will take longer to convert all the videos.
+
+#### Task 2
+1. Design a module that can queue and process videos and notify the caller when the videos are ready
+2. Implement the model
+3. Include tracking interface to show how many processes are going on and success of each
+
+This task was accomplished using a Python multiproccessing Pool object. The Python Pool library will manage a set of processes for you and give them tasks as requested to complete.
+
 ## Setup
 
 1. `pip3 install -r requirements.txt`
