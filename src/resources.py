@@ -10,8 +10,10 @@ class TwitterSummarizer(Resource):
     def __init__(self, p):
         self.p = p
 
-    @use_args({"user": fields.Str(required=True)})
+    @use_args({"user": fields.Str(required=True),
+               "format": fields.Str(required=False, missing='ogg'),
+               })
     def get(self, args):
         video_filename = args['user'] + '-' + uuid.uuid4().hex
-        self.p.apply(create_twitter_video, args=(video_filename, args['user']))
-        return {"response": f"Created video named {video_filename}.ogg.", "url": f"/display/{video_filename}"}, 200
+        self.p.apply(create_twitter_video, args=(video_filename, args['user']), kwds={'format': args['format']})
+        return {"response": f"Created video named {video_filename}.{args['format']}.", "url": f"/display/{video_filename}"}, 200

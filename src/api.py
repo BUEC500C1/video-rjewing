@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 signal.signal(signal.SIGINT, signal.SIG_IGN)
-p = Pool(1)
+p = Pool(2)
 
 api = Api(app)
 api.add_resource(resources.TwitterSummarizer, '/video',
