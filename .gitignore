@@ -6,3 +6,4 @@ videos
 images
 docker/secrets/*
 !docker/secrets/SECRETS.md
+.vscode
