@@ -8,6 +8,7 @@ def send_email(email, video_id):
     SUBJECT = 'EC500 HW4 - Your video is ready!'
     TEXT = f"""
     Video ID: {video_id}
+    URL: {Config.API_PUBLIC_IP}:{Config.API_PORT}/display/{video_id}
 
     Thank you for using my API!
     """
@@ -15,7 +16,6 @@ def send_email(email, video_id):
     # Gmail Sign In
     gmail_sender = Config.GMAIL_EMAIL
     gmail_passwd = Config.GMAIL_PASSWORD
-    print(gmail_sender, gmail_passwd)
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
