@@ -4,10 +4,12 @@ import shutil
 import resources
 import signal
 from time import sleep
-from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
 from flask import Flask, url_for, send_from_directory
 from flask_restful import Api
 from config import Config
+from threading import Thread
+from worker import work_dispatcher
 
 basedir = os.path.dirname(os.path.dirname(__file__))
 image_dir = os.path.join(basedir, 'images')
@@ -19,16 +21,19 @@ os.mkdir(image_dir)
 if not os.path.exists(video_dir):
     os.mkdir(video_dir)
 
-
 app = Flask(__name__)
 app.config.from_object(Config)
 
 signal.signal(signal.SIGINT, signal.SIG_IGN)
-p = Pool(2)
+process_pool = ThreadPool(2)
 
 api = Api(app)
-api.add_resource(resources.TwitterSummarizer, '/video',
-                 resource_class_kwargs={'p': p})
+api.add_resource(resources.TwitterSummarizer, '/video')
+api.add_resource(resources.VideoProgress, '/progress/<string:video_id>')
+
+
+queue_handler_thread = Thread(target=work_dispatcher, daemon=True, args=(process_pool,))
+queue_handler_thread.start()
 
 
 @app.route('/display/<video_id>')
@@ -50,8 +55,8 @@ def video_feed(video_id):
 
 def exit_handler(*args, **kwargs):
     print('Shutting down server...')
-    p.terminate()
-    p.join()
+    process_pool.terminate()
+    process_pool.join()
 
     sleep(1)
     sys.exit(0)
