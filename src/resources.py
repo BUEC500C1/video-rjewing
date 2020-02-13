@@ -20,7 +20,7 @@ class TwitterSummarizer(Resource):
             "finished": False
         }
         work_queue.put((video_id, args['user'], args['email'], args['format']))
-        return jsonify({"response": f"Created video named {video_id}.{args['format']}.", "url": f"{Config.API_PUBLIC_IP}:{Config.API_PORT}/progress/{video_id}"})
+        return jsonify({"response": f"Created video named {video_id}.{args['format']}.", "url": f"http://{Config.API_PUBLIC_IP}:{Config.API_PORT}/progress/{video_id}"})
 
 
 class VideoProgress(Resource):
