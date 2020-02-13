@@ -25,7 +25,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 signal.signal(signal.SIGINT, signal.SIG_IGN)
-process_pool = ThreadPool(2)
+process_pool = ThreadPool(Config.NUM_WORKERS)
 
 api = Api(app)
 api.add_resource(resources.TwitterSummarizer, '/video')
