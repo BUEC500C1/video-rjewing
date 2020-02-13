@@ -8,7 +8,7 @@ def send_email(email, video_id):
     SUBJECT = 'EC500 HW4 - Your video is ready!'
     TEXT = f"""
     Video ID: {video_id}
-    URL: {Config.API_PUBLIC_IP}:{Config.API_PORT}/display/{video_id}
+    URL: http://{Config.API_PUBLIC_IP}:{Config.API_PORT}/display/{video_id}
 
     Thank you for using my API!
     """
