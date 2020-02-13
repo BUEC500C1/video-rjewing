@@ -1,4 +1,5 @@
 import os
+from requests import get
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -23,6 +24,7 @@ class Config():
     # Set Host and Port
     API_IP = '0.0.0.0'
     API_PORT = 5000
+    API_PUBLIC_IP = get('https://api.ipify.org').text
 
     GMAIL_EMAIL = load_secret_from_path('EC500_GMAIL_EMAIL') or os.getenv('EC500_GMAIL_EMAIL')
     GMAIL_PASSWORD = load_secret_from_path('EC500_GMAIL_PASSWORD') or os.getenv('EC500_GMAIL_PASSWORD')
