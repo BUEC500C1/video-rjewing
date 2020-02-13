@@ -28,3 +28,5 @@ class Config():
 
     GMAIL_EMAIL = load_secret_from_path('EC500_GMAIL_EMAIL') or os.getenv('EC500_GMAIL_EMAIL')
     GMAIL_PASSWORD = load_secret_from_path('EC500_GMAIL_PASSWORD') or os.getenv('EC500_GMAIL_PASSWORD')
+
+    NUM_WORKERS = 4
