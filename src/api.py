@@ -24,14 +24,16 @@ if not os.path.exists(video_dir):
 app = Flask(__name__)
 app.config.from_object(Config)
 
+# Make threads/processes ignore sigint for clean exit
 signal.signal(signal.SIGINT, signal.SIG_IGN)
 process_pool = ThreadPool(Config.NUM_WORKERS)
 
+# initialize api endpoints
 api = Api(app)
 api.add_resource(resources.TwitterSummarizer, '/video')
 api.add_resource(resources.VideoProgress, '/progress/<string:video_id>')
 
-
+# initialize work dispatcher
 queue_handler_thread = Thread(target=work_dispatcher, daemon=True, args=(process_pool,))
 queue_handler_thread.start()
 

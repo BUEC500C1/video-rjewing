@@ -1,10 +1,12 @@
-from flask_restful import Resource
+import uuid
+
 from flask import jsonify
+
+from config import Config
+from flask_restful import Resource
 from webargs import fields
 from webargs.flaskparser import use_args
-from worker import work_queue, work_progress
-from config import Config
-import uuid
+from worker import work_progress, work_queue
 
 
 class TwitterSummarizer(Resource):
@@ -20,7 +22,8 @@ class TwitterSummarizer(Resource):
             "finished": False
         }
         work_queue.put((video_id, args['user'], args['email'], args['format']))
-        return jsonify({"response": f"Created video named {video_id}.{args['format']}.", "url": f"http://{Config.API_PUBLIC_IP}:{Config.API_PORT}/progress/{video_id}"})
+        return jsonify({"response": f"Created video named {video_id}.{args['format']}.", 
+                        "url": f"http://{Config.API_PUBLIC_IP}:{Config.API_PORT}/progress/{video_id}"})
 
 
 class VideoProgress(Resource):

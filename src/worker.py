@@ -1,12 +1,13 @@
 import os
+import threading
 import uuid
 from datetime import datetime
-from multiprocessing import current_process, Queue
+from multiprocessing import Queue, current_process
 from shutil import rmtree
-import threading
 from subprocess import Popen
-from twitter_handler import get_tweets, tweet_to_image
+
 from gmail_handler import send_email
+from twitter_handler import get_tweets, tweet_to_image
 
 basedir = os.path.dirname(os.path.dirname(__file__))
 
@@ -26,8 +27,7 @@ def create_twitter_video(video_id, user, email, format='ogg'):
     print("Creating video")
     print(work_progress)
     work_progress[video_id]['status'] = f"Generating images from {user}'s tweets"
-    image_path = os.path.join(basedir, 'images', uuid.uuid4().hex)
-    os.mkdir(image_path)
+    image_path = create_image_dir()
 
     print(f"{datetime.now()} -- Worker ({current_process()}) making {video_id} for @{user}")
 
@@ -45,13 +45,7 @@ def create_twitter_video(video_id, user, email, format='ogg'):
     print('Finished making images...')
     work_progress[video_id]['status'] = "Creating video from tweets"
 
-    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "panic",
-           "-f", "image2", "-i", f"{image_path}/tweet%d.png",
-           "-preset", "ultrafast",
-           "-r", "1/3", "-y", f"./videos/{video_id}.ogg"]
-
-    p = Popen(cmd)
-    p.communicate()
+    convert_images_to_video(image_path, video_id)
 
     rmtree(image_path)
 
@@ -63,3 +57,17 @@ def create_twitter_video(video_id, user, email, format='ogg'):
     work_progress[video_id]['finished'] = True
     print(f"{datetime.now()} -- Worker finished {video_id} for @{user}")
 
+
+def create_image_dir():
+    image_path = os.path.join(basedir, 'images', uuid.uuid4().hex)
+    os.mkdir(image_path)
+    return image_path
+
+
+def convert_images_to_video(image_path, video_id):
+    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "panic",
+           "-f", "image2", "-i", f"{image_path}/tweet%d.png",
+           "-preset", "ultrafast",
+           "-r", "1/3", "-y", f"./videos/{video_id}.ogg"]
+    p = Popen(cmd)
+    p.communicate()
