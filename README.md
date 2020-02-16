@@ -83,13 +83,13 @@ You can see an example of this in the "./tests/example_app.py" file:
 ```
 $ python3 ./tests/example_app.py
 
-{'response': 'Created video named elonmusk-c8ebd6e5ae16409cbec997943e59abf0.ogg.', 'url': 'http://127.0.0.1:5000/progress/elonmusk-c8ebd6e5ae16409cbec997943e59abf0'}
-{'video_id': 'elonmusk-c8ebd6e5ae16409cbec997943e59abf0', 'status': "Generating images from elonmusk's tweets", 'finished': False}
-Task status: Generating images from elonmusk's tweets
+{'display_url': 'http://localhost:5000/display/elonmusk-313be417018546bead43ac4615a11573', 'progress_url': 'http://localhost:5000/progress/elonmusk-313be417018546bead43ac4615a11573', 'response': 'Creating video named elonmusk-313be417018546bead43ac4615a11573.ogg.'}
+{'video_id': 'elonmusk-313be417018546bead43ac4615a11573', 'status': "Generating images from elonmusk's tweets", 'finished': False}
 Task status: Generating images from elonmusk's tweets
 Task status: Generating images from elonmusk's tweets
 Task status: Creating video from tweets
-Video is ready!
+Task status: Creating video from tweets
+Video is ready! Watch it at http://localhost:5000/display/elonmusk-313be417018546bead43ac4615a11573
 ```
 
 ### Video encoding
