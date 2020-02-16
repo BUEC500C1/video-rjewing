@@ -27,7 +27,14 @@ On my laptop, I have 8 (4 physical + 4 virtual) cores (which is 800% CPU), so I 
 2. Implement the model
 3. Include tracking interface to show how many processes are going on and success of each
 
-This task was accomplished using a Python multiproccessing ThreadPool object. The Python Pool library will manage a set of processes or threads for you and assign them tasks as requested to complete.
+This task was accomplished using a Python multiproccessing ThreadPool object. The Python Pool library will manage a set of processes or threads for you and assign them tasks as requested to complete. Whenever an API call is made to the '/video' endpoint, a new task is added to the queue. A work dispatcher thread will pull tasks from this queue and assign it to the ThreadPool, which will spin up as many threads as are needed (up to the maximum specified) to process the task. The actual video conversion using ffmpeg is done through a subprocess, so the thread will not be slown down by the heavy CPU work required by ffmpeg.
+
+The flow looks a little like this:
+```
+/video?user=elonmusk -> Task queued -> Task dequeued by work dispatcher ->
+Task assigned to ThreadPool -> ThreadPool thread creates video -> Progress for video is updated
+-> Video available on /display/VIDEO_ID
+```
 
 ## Setup
 
@@ -47,7 +54,7 @@ EC500_TWITTER_ACCESS_SECRET=XXXXXX
 ## Docker
 Alternatively, we can use docker-compose to easily deploy the application. First create the docker secret files as described in `docker/secrets/SECRETS.md`.
 
-Then run `docker-compose -f "video-rjewing/docker-compose.yml" up -d --build`.
+Then run `docker-compose -f "docker-compose.yml" up -d --build`.
 
 
 ### Setup email capabilities
