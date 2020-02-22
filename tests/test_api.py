@@ -1,11 +1,9 @@
 import sys
 import os
-import conftest
+import conftest  # noqa: F401
 import config
-import pytest
 import worker
-from unittest.mock import patch, MagicMock
-from twitter_handler import Tweet
+from unittest.mock import MagicMock
 from time import sleep
 
 sys.path.append('./src')
@@ -14,6 +12,7 @@ sys.path.append('./src')
 def test_twitter_api():
     if config.Config.TWITTER_API_KEY is None:
         assert True
+        return
     from twitter_handler import get_tweets
     tweets = get_tweets('elonmusk')
     assert tweets is not None
@@ -31,6 +30,7 @@ def test_download_image():
 def test_tweet_to_image():
     if config.Config.TWITTER_API_KEY is None:
         assert True
+        return
     from twitter_handler import get_tweets, tweet_to_image
     tweets = get_tweets('elonmusk')
     assert tweets is not None

@@ -14,13 +14,11 @@ def load_secret_from_path(name: str) -> str:
         return secret_file.read().strip()
 
 
-config_parser = configparser.ConfigParser()
-config_parser.read("./keys")
-
-
 def load_config(key, section='auth'):
-    if os.path.exists(section):
-        return config_parser.get(section, key)
+    if os.path.exists('./keys'):
+        config_parser = configparser.ConfigParser()
+        config_parser.read("./keys")
+        return config_parser.get(section, key).strip()
     return None
 
 
