@@ -18,9 +18,9 @@ config_parser = configparser.ConfigParser()
 config_parser.read("./keys")
 
 
-def load_config(key, filename='keys'):
-    if os.path.exists(filename):
-        return config_parser.get(filename, key)
+def load_config(key, section='auth'):
+    if os.path.exists(section):
+        return config_parser.get(section, key)
     return None
 
 

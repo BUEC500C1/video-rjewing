@@ -15,7 +15,8 @@ basedir = os.path.dirname(os.path.dirname(__file__))
 image_dir = os.path.join(basedir, 'images')
 video_dir = os.path.join(basedir, 'videos')
 # rebuild image directory
-shutil.rmtree(image_dir)
+if os.path.exists(image_dir):
+    shutil.rmtree(image_dir)
 os.mkdir(image_dir)
 # create video directory if not exists
 if not os.path.exists(video_dir):
