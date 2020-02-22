@@ -13,6 +13,7 @@ def test_twitter_api():
 
 def test_download_image():
     from twitter_handler import download_image
+    # We test the download function by downloading an image and comparing it to a pre-downloaded image
     image = download_image('http://placehold.it/120x120&text=image1')
     with open('./tests/test_image.png', 'rb') as f:
         control_image = f.read()

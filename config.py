@@ -1,4 +1,5 @@
 import os
+import configparser
 from requests import get
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -13,11 +14,15 @@ def load_secret_from_path(name: str) -> str:
         return secret_file.read().strip()
 
 
+config_parser = configparser.ConfigParser()
+config_parser.read("./keys")
+
+
 class Config():
-    TWITTER_API_KEY = load_secret_from_path('EC500_TWITTER_API_KEY') or os.getenv('EC500_TWITTER_API_KEY')
-    TWITTER_SECRET_KEY = load_secret_from_path('EC500_TWITTER_SECRET_KEY') or os.getenv('EC500_TWITTER_SECRET_KEY')
-    TWITTER_ACCESS_TOKEN = load_secret_from_path('EC500_TWITTER_ACCESS_TOKEN') or os.getenv('EC500_TWITTER_ACCESS_TOKEN')
-    TWITTER_ACCESS_SECRET = load_secret_from_path('EC500_TWITTER_ACCESS_SECRET') or os.getenv('EC500_TWITTER_ACCESS_SECRET')
+    TWITTER_API_KEY = config_parser.get('auth', 'consumer_key') or load_secret_from_path('EC500_TWITTER_API_KEY') or os.getenv('EC500_TWITTER_API_KEY')
+    TWITTER_SECRET_KEY = config_parser.get('auth', 'consumer_secret') or load_secret_from_path('EC500_TWITTER_SECRET_KEY') or os.getenv('EC500_TWITTER_SECRET_KEY')
+    TWITTER_ACCESS_TOKEN = config_parser.get('auth', 'access_token') or load_secret_from_path('EC500_TWITTER_ACCESS_TOKEN') or os.getenv('EC500_TWITTER_ACCESS_TOKEN')
+    TWITTER_ACCESS_SECRET = config_parser.get('auth', 'access_secret') or load_secret_from_path('EC500_TWITTER_ACCESS_SECRET') or os.getenv('EC500_TWITTER_ACCESS_SECRET')
 
     SECRET_KEY = load_secret_from_path('EC500_SECRET_KEY') or os.getenv('EC500_SECRET_KEY', 'dev_key')
 

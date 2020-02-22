@@ -7,3 +7,5 @@ images
 docker/secrets/*
 !docker/secrets/SECRETS.md
 .vscode
+my-google-api-credentials.json
+keys
