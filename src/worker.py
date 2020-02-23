@@ -19,13 +19,11 @@ def work_dispatcher(process_pool):
     while True:
         video_id, user, email, fmt = work_queue.get()
         print("Got work")
-        print(work_progress)
         process_pool.apply_async(create_twitter_video, args=(video_id, user, email), kwds={'format': fmt})
 
 
 def create_twitter_video(video_id, user, email, format='ogg'):
     print("Creating video")
-    print(work_progress)
     work_progress[video_id]['status'] = f"Generating images from {user}'s tweets"
     image_path = create_image_dir()
 

@@ -40,7 +40,9 @@ def test_tweet_to_image():
 
 
 def test_queue_video(app):
-    worker.create_twitter_video = MagicMock(return_value="mocked stuff")
+    worker.create_twitter_video = MagicMock(side_effect=worker.create_twitter_video)
+    worker.get_tweets = MagicMock(return_value=[])
+    worker.convert_images_to_video = MagicMock(return_value="mocked")
 
     res = app.get("/video?user=elonmusk")
     sleep(1)  # wait for the worker to dispatch request
@@ -49,12 +51,16 @@ def test_queue_video(app):
 
 
 def test_video_progress(app):
-    worker.create_twitter_video = MagicMock(return_value="mocked stuff")
+    worker.create_twitter_video = MagicMock(side_effect=worker.create_twitter_video)
+    worker.get_tweets = MagicMock(return_value=[])
+    worker.convert_images_to_video = MagicMock(return_value="mocked")
 
     res = app.get("/video?user=elonmusk")
     progress = app.get(f"/progress/{res.json['video_id']}")
     sleep(1)  # wait for the worker to dispatch request
     assert res.status_code == 200
     assert progress.status_code == 200
-    assert progress.json['status'] == "In queue" and progress.json['finished'] == False
+    assert progress.json['status'] == "In queue" and progress.json['finished'] is False
     assert worker.create_twitter_video.called
+    progress = app.get(f"/progress/{res.json['video_id']}")
+    assert progress.json['status'] == "Video finished!" and progress.json['finished'] is True
