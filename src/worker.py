@@ -15,6 +15,18 @@ work_queue = Queue()
 work_progress = {}
 
 
+def update_work_progress(video_id, key=None, val=None):
+    if video_id not in work_progress:
+        work_progress[video_id] = {
+            "video_id": video_id,
+            "status": "",
+            "finished": False
+        }
+    if key is None:
+        return
+    work_progress[video_id][key] = val
+
+
 def work_dispatcher(process_pool):
     while True:
         video_id, user, email, fmt = work_queue.get()
@@ -24,7 +36,7 @@ def work_dispatcher(process_pool):
 
 def create_twitter_video(video_id, user, email, format='ogg'):
     print("Creating video")
-    work_progress[video_id]['status'] = f"Generating images from {user}'s tweets"
+    update_work_progress(video_id, key='status', val=f"Generating images from {user}'s tweets")
     image_path = create_image_dir()
 
     print(f"{datetime.now()} -- Worker ({current_process()}) making {video_id} for @{user}")
@@ -41,7 +53,7 @@ def create_twitter_video(video_id, user, email, format='ogg'):
         t.join()
 
     print('Finished making images...')
-    work_progress[video_id]['status'] = "Creating video from tweets"
+    update_work_progress(video_id, key='status', val="Creating video from tweets")
 
     convert_images_to_video(image_path, video_id)
 
@@ -51,8 +63,8 @@ def create_twitter_video(video_id, user, email, format='ogg'):
         print(f"Sending email... {email}")
         send_email(email, video_id)
 
-    work_progress[video_id]['status'] = f"Video finished!"
-    work_progress[video_id]['finished'] = True
+    update_work_progress(video_id, key='status', val=f"Video finished!")
+    update_work_progress(video_id, key='finished', val=True)
     print(f"{datetime.now()} -- Worker finished {video_id} for @{user}")
 
 
