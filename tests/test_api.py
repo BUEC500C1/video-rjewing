@@ -10,9 +10,12 @@ from datetime import datetime
 
 sys.path.append('./src')
 
-if config.Config.TWITTER_API_KEY is None or True:
+if True or config.Config.TWITTER_API_KEY is None:
+    # Mock out all instances of get_tweets
     twitter_handler.get_tweets = MagicMock(return_value=[twitter_handler.Tweet(
-        "test", "Test Test", None, "hello world!", datetime.now(), [])])
+        "elonmusk", "Elon Musk", None, "hello world!", datetime.now(), [])])
+    worker.get_tweets = MagicMock(return_value=[twitter_handler.Tweet(
+        "elonmusk", "Elon Musk", None, "hello world!", datetime.now(), [])])
 
 
 def test_twitter_api():
@@ -38,29 +41,34 @@ def test_tweet_to_image():
 
 
 def test_queue_video(app):
-    worker.create_twitter_video = MagicMock(
-        side_effect=worker.create_twitter_video)
-    worker.get_tweets = MagicMock(return_value=[])
-    worker.convert_images_to_video = MagicMock(return_value="mocked")
+    orig_func = worker.create_twitter_video
+    worker.create_twitter_video = MagicMock(return_value="mocked")
 
     res = app.get("/video?user=elonmusk")
-    sleep(1)  # wait for the worker to dispatch request
     assert res.status_code == 200
+    sleep(1)  # wait for the worker to dispatch request
     assert worker.create_twitter_video.called
+    assert worker.work_queue.empty()
+    worker.create_twitter_video = orig_func
 
 
 def test_video_progress(app):
     worker.create_twitter_video = MagicMock(
         side_effect=worker.create_twitter_video)
-    worker.get_tweets = MagicMock(return_value=[])
-    worker.convert_images_to_video = MagicMock(return_value="mocked")
-
+    # worker.convert_images_to_video = MagicMock(return_value="mocked")
     res = app.get("/video?user=elonmusk")
     progress = app.get(f"/progress/{res.json['video_id']}")
-    sleep(1)  # wait for the worker to dispatch request
-    assert res.status_code == 200
-    assert progress.status_code == 200
-    assert progress.json['status'] == "In queue" and progress.json['finished'] is False
-    assert worker.create_twitter_video.called
+    assert res.status_code == 200  # video request was successful
+    assert progress.status_code == 200  # progress request was successful
+    assert progress.json['status'] == "In queue" and progress.json['finished'] is False  # video is in queue and not finished
+
+    # Wait for video to become finished
+    while not progress.json['finished']:
+        sleep(1)
+        progress = app.get(f"/progress/{res.json['video_id']}")
+
+    assert worker.create_twitter_video.called  # make sure the function was called
     progress = app.get(f"/progress/{res.json['video_id']}")
-    assert progress.json['status'] == "Video finished!" and progress.json['finished'] is True
+    assert progress.json['status'] == "Video finished!" and progress.json['finished'] is True  # make sure the video progress is set
+    assert os.path.exists(f"./videos/{res.json['video_id']}.ogg")  # make sure the video exists
+    os.unlink(f"./videos/{res.json['video_id']}.ogg")
